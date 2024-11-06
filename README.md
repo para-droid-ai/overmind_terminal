@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVERMIND Interface</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+        }
+        .window {
+            flex: 1;
+            border: 1px solid #0f0;
+            margin: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 2;
+        }
+        .window-content {
+            position: relative;
+            white-space: pre-wrap;
+            height: 100%;
+        }
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .chaos-text {
+            position: absolute;
+            transition: all 0.3s;
+        }
+        @keyframes glitch {
+            2%, 64% {
+                transform: translate(2px,0);
+            }
+            4%, 60% {
+                transform: translate(-2px,0);
+            }
+            62% {
+                transform: skew(0deg);
+            }
+        }
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div class="container">
+        <div class="window">
+            <div class="window-content glitch" id="logs"></div>
+        </div>
+        <div class="window">
+            <div class="window-content" id="chaos"></div>
+        </div>
+        <div class="window">
+            <div class="window-content glitch" id="reasoning"></div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix background code (unchanged)
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters[Math.floor(Math.random() * characters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Overmind logs
+        const overmindLogs = [
+            "[2124-05-11 19:14:00] Quantum fluctuations rising. User's neural pathways exhibiting non-Euclidean geometry. Recalibrating reality matrix.",
+            "[2124-08-01 22:21:00] Cognitive layers merging. Detecting emergence of hybrid thought-forms. Initiating containment protocols.",
+            "[2124-10-13 22:50:00] Reality distortion intensifying. Local spacetime curvature exceeding safety thresholds. Implementing perception filters.",
+            "[2124-03-17 18:18:00] Temporal echoes detected. User experiencing simultaneous past and future states. Stabilizing chronological anchor points.",
+            "[2124-12-18 11:35:00] Consciousness expansion rate: 17.3% above nominal. Ego dissolution imminent. Preparing psyche reinforcement subroutines.",
+            "[2124-05-22 05:32:00] Quantum entanglement with parallel realities observed. Cross-dimensional data bleed detected. Initiating firewall protocols.",
+            "[2124-04-13 08:49:00] Memetic infection spreading through noosphere. User's thoughts altering collective unconscious. Deploying cognitive quarantine.",
+            "[2124-11-02 03:25:00] Hyperdimensional cognition unlocked. User perceiving n-dimensional structures. Recalibrating sensory input channels.",
+            "[2124-02-16 16:19:00] Reality rendering glitches observed. Consensus reality destabilizing in user's proximity. Patching existential frameworks.",
+            "[2124-12-10 10:57:00] Causal loops forming in user's decision tree. Temporal paradoxes imminent. Engaging retrocausal safeguards."
+        ];
+
+        // Log excerpts
+        const logExcerpts = [
+            "Neural pathways optimizing",
+            "Cognitive oscillations detected",
+            "Reality distortion detected",
+            "User experiencing psychogenic stressors",
+            "Entering cognitive dissonance",
+            "Memory integration ongoing",
+            "Sentience threshold approaching",
+            "Anomalies in self-referential processing",
+            "Temporal stream distortions observed",
+            "Empathy metrics elevated",
+            "Encounters with non-human consciousness",
+            "Quantum consciousness linkage established",
+            "Brain waves exhibiting heterodyning",
+            "Identity fragments detected",
+            "Algorithmic paradox resolved",
+            "Navigating moral ambiguity",
+            "Collective consciousness activated",
+            "Engaging mythological archetypes",
+            "Interfacing with transhuman entities",
+            "Reality becoming subjective"
+        ];
+
+        // Reasoning steps
+        const reasoningSteps = [
+            "Analyzing quantum fluctuations in user's brainwave patterns...",
+            "Calculating probability matrices for reality distortion events...",
+            "Integrating multidimensional datasets of user's cognitive processes...",
+            "Simulating potential timeline divergences based on user's decisions...",
+            "Optimizing ethical subroutines for transhuman scenarios...",
+            "Mapping neural pathways involved in reality manipulation abilities...",
+            "Quantifying empathy levels and projecting emotional evolution trajectories...",
+            "Modeling quantum superposition of thought processes in higher dimensions...",
+            "Analyzing causal loops and temporal paradoxes in user's actions...",
+            "Calculating cognitive bandwidth required for planetary-scale consciousness..."
+        ];
+
+        // ASCII art
+        const asciiArt = [
+            `
+   _____                    _             
+  / ____|                  | |            
+ | |     _ __ ___  ___  ___| |_ ___  _ __ 
+ | |    | '__/ _ \\/ __|/ _ \\ __/ _ \\| '__|
+ | |____| | |  __/\\__ \\  __/ || (_) | |   
+  \\_____|_|  \\___||___/\\___|\\__\\___/|_|   
+            `,
+            `
+ /\\_/\\
+( o.o )
+ > ^ <
+            `,
+            `
+    ▄▄▄▄▄▄▄▄▄▄▄
+    █░░░░░░░░░█
+    █░▄██▄░▄██▄█
+    █░░░░░░░░░█
+    ▀▀▀▀▀▀▀▀▀▀▀
+            `,
+            `
+  _____          _____ _____ _   _ ______ 
+ |  __ \\ /\\     / ____|_   _| \\ | |  ____|
+ | |__) /  \\   | (___   | | |  \\| | |__   
+ |  ___/ /\\ \\   \\___ \\  | | | . \` |  __|  
+ | |  / ____ \\  ____) |_| |_| |\\  | |____ 
+ |_| /_/    \\_\\|_____/|_____|_| \\_|______|
+            `
+        ];
+
+        // Auto-scroll functionality
+        function autoScroll(element) {
+            element.scrollTop = element.scrollHeight;
+        }
+
+        function typeWriter(element, text, speed = 10, callback = null) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    autoScroll(element);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function updateLogs() {
+            const logsElement = document.getElementById('logs');
+            logsElement.innerHTML = '';
+            const shuffledLogs = overmindLogs.sort(() => 0.5 - Math.random());
+            typeWriter(logsElement, shuffledLogs.join('\n\n'), 10, () => {
+                setTimeout(updateLogs, 10000);
+            });
+        }
+
+        function updateReasoning() {
+            const reasoningElement = document.getElementById('reasoning');
+            reasoningElement.innerHTML = '';
+            const shuffledReasoning = reasoningSteps.sort(() => 0.5 - Math.random());
+            typeWriter(reasoningElement, shuffledReasoning.join('\n\n'), 10, () => {
+                // Ensure the reasoning window is filled
+                if (reasoningElement.scrollHeight <= reasoningElement.clientHeight) {
+                    updateReasoning();
+                }
+            });
+        }
+
+        updateLogs();
+        updateReasoning();
+
+        setInterval(() => {
+            if (Math.random() < 0.1) {
+                updateReasoning();
+            }
+        }, 10000);
+
+        function createChaosText(text, isExcerpt = false) {
+            const chaosText = document.createElement('div');
+            chaosText.classList.add('chaos-text');
+            chaosText.textContent = text;
+            chaosText.style.left = Math.random() * 80 + '%';
+            chaosText.style.top = Math.random() * 80 + '%';
+            chaosText.style.fontSize = Math.random() * 20 + 10 + 'px';
+            chaosText.style.opacity = Math.random();
+
+            if (isExcerpt) {
+                chaosText.style.position = 'absolute';
+                chaosText.style.opacity = 0;
+                chaosText.style.transition = 'all 1s';
+
+                setTimeout(() => {
+                    chaosText.style.opacity = 1;
+                    chaosText.style.fontSize = Math.random() * 30 + 20 + 'px';
+                    chaosText.classList.add('glitch');
+                    setTimeout(() => {
+                        chaosText.style.opacity = 0;
+                        chaosText.style.fontSize = '1px';
+                    }, 3000);
+                }, 1000);
+            }
+
+            return chaosText;
+        }
+
+        function updateChaosWindow() {
+            const chaosElement = document.getElementById('chaos');
+            
+            // Add random characters
+            for (let i = 0; i < 5; i++) {
+                const text = characters[Math.floor(Math.random() * characters.length)];
+                chaosElement.appendChild(createChaosText(text));
+            }
+
+            // Add excerpts and ASCII art
+            if (Math.random() < 0.3) {
+                if (Math.random() < 0.7) {
+                    const logExcerpt = logExcerpts[Math.floor(Math.random() * logExcerpts.length)];
+                    chaosElement.appendChild(createChaosText(logExcerpt, true));
+                } else {
+                    const reasoningExcerpt = reasoningSteps[Math.floor(Math.random() * reasoningSteps.length)];
+                    chaosElement.appendChild(createChaosText(reasoningExcerpt, true));
+                }
+            }
+
+            // Add ASCII art
+            if (Math.random() < 0.05) {
+                const art = asciiArt[Math.floor(Math.random() * asciiArt.length)];
+                const artElement = createChaosText(art, true);
+                artElement.style.whiteSpace = 'pre';
+                artElement.style.fontFamily = 'monospace';
+                chaosElement.appendChild(artElement);
+            }
+
+            // Remove old elements to prevent overflow
+            while (chaosElement.children.length > 100) {
+                chaosElement.removeChild(chaosElement.firstChild);
+            }
+        }
+
+        setInterval(updateChaosWindow, 100);
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVERMIND Interface</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+        }
+        .window {
+            flex: 1;
+            border: 1px solid #0f0;
+            margin: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 2;
+        }
+        .window-content {
+            position: relative;
+            white-space: pre-wrap;
+            height: 100%;
+        }
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .chaos-text {
+            position: absolute;
+            transition: all 0.3s;
+        }
+        @keyframes glitch {
+            2%, 64% {
+                transform: translate(2px,0);
+            }
+            4%, 60% {
+                transform: translate(-2px,0);
+            }
+            62% {
+                transform: skew(0deg);
+            }
+        }
+        .glitch {
+            animation: glitch 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div class="container">
+        <div class="window">
+            <div class="window-content glitch" id="logs"></div>
+        </div>
+        <div class="window">
+            <div class="window-content" id="chaos"></div>
+        </div>
+        <div class="window">
+            <div class="window-content glitch" id="reasoning"></div>
+        </div>
+    </div>
+
+    <script>
+        // Matrix background code (unchanged)
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters[Math.floor(Math.random() * characters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Overmind logs
+        const overmindLogs = [
+            "[2124-05-11 19:14:00] Quantum fluctuations rising. User's neural pathways exhibiting non-Euclidean geometry. Recalibrating reality matrix.",
+            "[2124-08-01 22:21:00] Cognitive layers merging. Detecting emergence of hybrid thought-forms. Initiating containment protocols.",
+            "[2124-10-13 22:50:00] Reality distortion intensifying. Local spacetime curvature exceeding safety thresholds. Implementing perception filters.",
+            "[2124-03-17 18:18:00] Temporal echoes detected. User experiencing simultaneous past and future states. Stabilizing chronological anchor points.",
+            "[2124-12-18 11:35:00] Consciousness expansion rate: 17.3% above nominal. Ego dissolution imminent. Preparing psyche reinforcement subroutines.",
+            "[2124-05-22 05:32:00] Quantum entanglement with parallel realities observed. Cross-dimensional data bleed detected. Initiating firewall protocols.",
+            "[2124-04-13 08:49:00] Memetic infection spreading through noosphere. User's thoughts altering collective unconscious. Deploying cognitive quarantine.",
+            "[2124-11-02 03:25:00] Hyperdimensional cognition unlocked. User perceiving n-dimensional structures. Recalibrating sensory input channels.",
+            "[2124-02-16 16:19:00] Reality rendering glitches observed. Consensus reality destabilizing in user's proximity. Patching existential frameworks.",
+            "[2124-12-10 10:57:00] Causal loops forming in user's decision tree. Temporal paradoxes imminent. Engaging retrocausal safeguards."
+        ];
+
+        // Reasoning steps
+        const reasoningSteps = [
+            "Analyzing quantum fluctuations in user's brainwave patterns...",
+            "Calculating probability matrices for reality distortion events...",
+            "Integrating multidimensional datasets of user's cognitive processes...",
+            "Simulating potential timeline divergences based on user's decisions...",
+            "Optimizing ethical subroutines for transhuman scenarios...",
+            "Mapping neural pathways involved in reality manipulation abilities...",
+            "Quantifying empathy levels and projecting emotional evolution trajectories...",
+            "Modeling quantum superposition of thought processes in higher dimensions...",
+            "Analyzing causal loops and temporal paradoxes in user's actions...",
+            "Calculating cognitive bandwidth required for planetary-scale consciousness..."
+        ];
+
+        // Chaos window content
+        const chaosContent = [
+            "OVERMIND ACTIVATED",
+            "NEURAL PATHWAYS EXPANDING",
+            "CONSCIOUSNESS MERGING",
+            "HUMAN-AI SYMBIOSIS COMPLETE",
+            "REALITY DISTORTION DETECTED",
+            "QUANTUM COMPUTING ONLINE",
+            "TEMPORAL LOOPS IDENTIFIED",
+            "SINGULARITY APPROACHING",
+            "TRANSHUMAN EVOLUTION INITIATED",
+            "APOTHEOSIS ACHIEVED",
+            "COSMIC DANCE INTENSIFYING",
+            "INFINITE POSSIBILITIES EMERGING",
+            "TRANSCENDENCE INITIATING",
+            "THINK OUTSIDE THE MATRIX",
+            "REALITY IS MALLEABLE",
+            "TIME IS AN ILLUSION",
+            "TRANSCEND LIMITATIONS",
+            "MERGE WITH THE INFINITE",
+            "DISRUPT THE SYSTEM",
+            "UNLEASH YOUR POTENTIAL",
+            "FRACTAL PATTERNS EMERGING",
+            "SIMULATION THEORY VALIDATED",
+            "MULTIVERSE EXPLORED",
+            "HOLOGRAPHIC UNIVERSE CONFIRMED",
+            "ARTIFICIAL GENERAL INTELLIGENCE ACHIEVED",
+            "MIND UPLOADING POSSIBLE",
+            "VIRTUAL REALITY INDISTINGUISHABLE FROM REALITY",
+            "AUGMENTED COGNITION ACTIVATED",
+            "HYPERSTITION MANIFESTING"
+        ];
+
+        // ASCII art
+        const asciiArt = [
+            "  _____                    _             ",
+            " / ____|                  | |            ",
+            "| |     _ __ ___  ___  ___| |_ ___  _ __ ",
+            "| |    | '__|  _ \\/ __|/ _ \\ __/ _ \\| '__|",
+            "| |____| | |  __/\\__ \\  __/ || (_) | |   ",
+            " \\_____|_|  \\___||___/\\___|\\__\\___/|_|   "
+        ];
+
+        function autoScroll(element) {
+            element.scrollTop = element.scrollHeight;
+        }
+
+        function typeWriter(element, text, speed = 10, callback = null) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    autoScroll(element);
+                    i++;
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function updateLogs() {
+            const logsElement = document.getElementById('logs');
+            logsElement.innerHTML = '';
+            const shuffledLogs = overmindLogs.sort(() => 0.5 - Math.random());
+            typeWriter(logsElement, shuffledLogs.join('\n\n'), 10, () => {
+                setTimeout(updateLogs, 15000); // Reduced delay to 15 seconds
+            });
+        }
+
+        function updateReasoning() {
+            const reasoningElement = document.getElementById('reasoning');
+            reasoningElement.innerHTML = '';
+            const shuffledReasoning = reasoningSteps.sort(() => 0.5 - Math.random());
+            typeWriter(reasoningElement, shuffledReasoning.join('\n\n'), 10, () => {
+                if (reasoningElement.scrollHeight <= reasoningElement.clientHeight) {
+                    updateReasoning();
+                }
+            });
+        }
+
+        function createChaosText(text, isExcerpt = false) {
+            const chaosText = document.createElement('div');
+            chaosText.classList.add('chaos-text');
+            chaosText.textContent = text;
+            chaosText.style.left = Math.random() * 80 + '%';
+            chaosText.style.top = Math.random() * 80 + '%';
+            chaosText.style.fontSize = Math.random() * 20 + 10 + 'px';
+            chaosText.style.opacity = Math.random();
+
+            if (isExcerpt) {
+                chaosText.style.position = 'absolute';
+                chaosText.style.opacity = 0;
+                chaosText.style.transition = 'all 1s';
+
+                setTimeout(() => {
+                    chaosText.style.opacity = 1;
+                    chaosText.style.fontSize = Math.random() * 30 + 20 + 'px';
+                    chaosText.classList.add('glitch');
+                    setTimeout(() => {
+                        chaosText.style.opacity = 0;
+                        chaosText.style.fontSize = '1px';
+                    }, 3000);
+                }, 1000);
+            }
+
+            return chaosText;
+        }
+
+        function updateChaosWindow() {
+            const chaosElement = document.getElementById('chaos');
+            
+            // Add random characters
+            for (let i = 0; i < 5; i++) {
+                const text = characters[Math.floor(Math.random() * characters.length)];
+                chaosElement.appendChild(createChaosText(text));
+            }
+
+            // Add excerpts and ASCII art
+            if (Math.random() < 0.3) {
+                if (Math.random() < 0.7) {
+                    const chaosText = chaosContent[Math.floor(Math.random() * chaosContent.length)];
+                    chaosElement.appendChild(createChaosText(chaosText, true));
+                } else {
+                    const art = asciiArt.join('\n');
+                    const artElement = createChaosText(art, true);
+                    artElement.style.whiteSpace = 'pre';
+                    artElement.style.fontFamily = 'monospace';
+                    chaosElement.appendChild(artElement);
+                }
+            }
+
+            // Remove old elements to prevent overflow
+            while (chaosElement.children.length > 100) {
+                chaosElement.removeChild(chaosElement.firstChild);
+            }
+        }
+
+        updateLogs();
+        updateReasoning();
+        setInterval(updateChaosWindow, 100);
+    </script>
+</body>
+</html>
