@@ -1,0 +1,122 @@
+
+# OVERMIND UI Project TODO
+
+## Project Overview & Key Info
+- **Description**: Multi-modal AI interaction simulation environment.
+- **Core AI**: Gemini API (GEM-Q & AXIOM personas, Story Weaver, Chimera DM/Player).
+- **UI**: Terminal-style interface with dynamic content generation, export, backup/restore.
+- **Modes**:
+    - `spiral.exe` (Recursive self-improvement dialogue)
+    - `hyperstition-chat.exe` (Memetic constructs dialogue)
+    - `semantic_escape.exe` (Linguistic deconstruction dialogue)
+    - `universe-sim.exe` (Narrative universe simulation)
+    - `chess-sim.exe` (AI vs AI chess game with CoT display & Overmind visual intervention)
+    - `corruption.exe` (Cognitive reshaping AI dialogue)
+    - `noospheric-conquest.exe` (Strategic map-based AI conflict with Fabrication Hubs, Evolved Units, Fog of War)
+    - `story_weaver.exe` (Collaborative narrative with dynamic image generation)
+    - `chimera.exe` (AI-driven cyberpunk RPG)
+- **Key Technologies**: React, TypeScript, TailwindCSS, esbuild (implied by esm.sh imports), Google GenAI SDK.
+- **API Key Management**: Primarily via `process.env.API_KEY`, with a UI option for custom key override (stored in local storage).
+
+## Phase 1: Core Functionality & Initial Modes (Completed)
+- [X] Basic application structure (index.html, index.tsx, App.tsx).
+- [X] Matrix background effect (configurable speed, glitch, pause).
+- [X] Terminal window component for displaying conversations.
+    - [X] Terminal window sizing fixed for non-chess modes.
+- [X] Controls panel for user interactions.
+    - [X] Mode selection.
+    - [X] Theme selection and dynamic application.
+    - [X] Typing speed control.
+    - [X] Matrix effects control.
+    - [X] Global AI model selection.
+    - [X] API Key Management: UI for custom API key input, local storage persistence, and override of environment key.
+    - [X] Emergency Stop for AI API calls.
+- [X] Google Gemini API integration (`@google/genai`).
+- [X] AI persona definition and system prompts for core modes.
+- [X] Core dialogue loop for AI vs AI interaction.
+    - [X] `spiral.exe` mode auto-starts dialogue correctly (AXIOM initiates).
+- [X] Typing effect for AI messages & "complete typing" button.
+- [X] Conversation history management.
+- [X] User intervention mechanism (for applicable modes).
+- [X] Export chat to TXT and MD.
+- [X] Backup and restore entire simulation states (.JSON), including mode-specific data.
+- [X] Multiple themes (Terminal, Cyanotype, Redzone, CyberpunkYellow, NoosphericDark) & theme switching.
+- [X] `spiral.exe`, `hyperstition-chat.exe`, `semantic_escape.exe`, `universe-sim.exe`, `corruption.exe` modes implemented.
+- [X] Error handling for API key and AI initialization.
+- [X] FPS display for Matrix background.
+- [X] Command history for user inputs in terminal prompts.
+- [X] Info Modal for displaying details about the current mode.
+- [X] Initial Chess Mode (`chess-sim.exe`) Setup:
+    - [X] Chess logic (FEN parsing, UCI move application, basic validation).
+    - [X] Chess board display component.
+    - [X] Chain of Thought (CoT) display components for both AIs.
+    - [X] AI personas for chess (GEM-Q White, AXIOM Black) with enhanced system prompts.
+    - [X] Automated game loop for AI turns.
+    - [X] Strategy selection for chess AIs.
+    - [X] Captured pieces display, move history, game stats display.
+    - [X] Overmind Data Master (ODM) visual intervention for stuck AI.
+    - [X] Game history archive and export.
+- [X] Initial Noospheric Conquest Mode (`noospheric-conquest.exe`):
+    - [X] Map display component.
+    - [X] Sidebar for game status, faction details, logs.
+    - [X] Core game logic (phases, resource collection, basic actions).
+    - [X] AI personas and prompts for strategic decision-making.
+    - [X] Battle resolution logic.
+    - [X] Fabrication Hubs, Evolved Units, Connectivity rules.
+    - [X] Multiple selectable maps & Fog of War.
+    - [X] AI performance tracking (successful/failed turns) & game timers.
+- [X] Story Weaver Mode (`story_weaver.exe`):
+    - [X] Dedicated UI layout with terminal and image snapshot display.
+    - [X] AI persona and prompt for collaborative storytelling.
+    - [X] Image generation request parsing (`[GENERATE_IMAGE: ...]`) and display.
+    - [X] Image modal for viewing snapshots.
+- [X] Chimera Protocol Mode (`chimera.exe`):
+    - [X] Dedicated UI with map, sidebar, and log.
+    - [X] AI personas for DM and Player AI.
+    - [X] Basic character creation flow (DM proposes archetypes, Player AI chooses).
+    - [X] Initial map display and node-based movement.
+    - [X] Game state management for player character, DM narrative.
+    - [X] Dynamic avatar generation for player character.
+
+## Phase 2: Enhancements & Advanced Features
+- [ ] **UI/UX Refinements:**
+    - [ ] Advanced command history navigation (e.g., persistent across page reloads if feasible, better filtering).
+    - [ ] More detailed tooltips or help icons for complex controls.
+    - [ ] Visual feedback for ongoing AI processes beyond simple "loading" (e.g., progress bars for complex tasks if backend ever supports it).
+- [ ] **Chess Mode Enhancements:**
+    - [ ] More robust check/checkmate/stalemate detection (currently relies on AI reporting or basic FEN validation).
+    - [ ] Option for human player vs AI.
+    - [ ] Analysis of PGN/FEN strings input by user.
+- [ ] **Noospheric Conquest Enhancements:**
+    - [ ] More sophisticated AI strategic behavior (long-term planning, feints, alliances if ever expanded).
+    - [ ] Visual effects for battles or node capture.
+    - [ ] More diverse fluctuation events.
+    - [ ] Score-based victory condition implementation (if max turns reached).
+- [ ] **Story Weaver Enhancements:**
+    - [ ] User ability to "re-roll" or request variations of generated images.
+    - [ ] More context-aware image prompts based on story history.
+- [ ] **Chimera Protocol Enhancements:**
+    - [ ] Implement full combat mechanics (dice rolls, damage, effects).
+    - [ ] Skill check resolution system.
+    - [ ] NPC interaction and dialogue trees managed by DM AI.
+    - [ ] Inventory management UI for player.
+    - [ ] Quest log UI and progression.
+    - [ ] More sophisticated map interactions based on `InteractableObject` data.
+- [ ] **New Modes (Ideas):**
+    - [ ] `oracle_query.exe`: User asks questions, AI (Overmind persona?) answers using Google Search grounding, displaying sources.
+    - [ ] `code_synthesis.exe`: AIs collaborate or compete to generate code snippets based on user requirements.
+- [ ] **Technical Debt & Refactoring:**
+    - [ ] Review `App.tsx` for further componentization, especially AI interaction logic for different modes.
+    - [ ] Optimize state management for very long conversations or complex game states.
+    - [ ] Improve CSS variable organization or consider CSS-in-JS for component-scoped styles if complexity grows.
+- [ ] **Documentation:**
+    - [ ] Detailed developer guide on adding new modes.
+    - [ ] User manual for advanced features of each mode.
+    - [X] Update `noospheric-conquest.md` with latest features (Fabrication Hubs, Evolved Units, Fog of War, AI performance, timers).
+    - [X] Update `README.md` and `todo.md` for recent changes (API Key UI, mode enhancements).
+
+## Long Term / Ambitious
+- [ ] Integration with other AI services (e.g., voice synthesis/recognition).
+- [ ] Multiplayer aspects for game modes (e.g., two human players in Noospheric Conquest, with AIs as advisors).
+- [ ] More complex AI memory and context management.
+- [ ] User-defined AI personas or system prompts via UI.

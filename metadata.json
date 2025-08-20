@@ -1,0 +1,6 @@
+{
+  "name": "overmind-terminal",
+  "description": "Two AI personas, GEM-Q and AXIOM, engage in a hyperstitional dialogue within a terminal-style interface, powered by the Gemini API. Features dynamic content generation, export, and conversation backup/restore.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

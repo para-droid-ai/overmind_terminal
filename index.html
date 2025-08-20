@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="en" data-theme="terminal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OVERMIND Interface</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      /* Default Theme: Terminal (Green) */
+      --color-primary-500: #22c55e; /* green-500 */
+      --color-primary-600: #16a34a; /* green-600 */
+      --color-primary-700: #15803d; /* green-700 */
+      --color-accent-200: #bbf7d0; /* green-200 */
+      --color-accent-300: #86efac; /* green-300 */
+      --color-accent-400: #4ade80; /* green-400 */
+      --color-text-base: #4ade80; /* green-400 */
+      --color-text-heading: #bbf7d0; /* green-200 */
+      --color-text-muted: #86efac; /* green-300 */
+      --color-text-placeholder: #4b5563; /* gray-600 */
+      --color-text-button-primary: #000000;
+      --color-text-button-secondary: var(--color-accent-300);
+
+      --color-border-base: #22c55e; /* green-500 */
+      --color-border-strong: #16a34a; /* green-600 */
+      --color-border-input: var(--color-primary-600);
+      --color-border-button-primary: var(--color-primary-600);
+      --color-border-button-secondary: #4b5563; /* gray-600 */
+      
+      --color-shadow-base: var(--color-primary-500);
+
+      --color-bg-page: #000000;
+      --color-bg-terminal: rgba(0, 0, 0, 0.85);
+      --color-bg-panel: rgba(10, 10, 10, 0.92); /* Slightly less black */
+      --color-bg-input: #111827; /* gray-900 */
+      --color-bg-button-primary: var(--color-primary-500);
+      --color-bg-button-primary-hover: var(--color-primary-600);
+      --color-bg-button-secondary: #374151; /* gray-700 */
+      --color-bg-button-secondary-hover: #4b5563; /* gray-600 */
+      --color-bg-dropdown: var(--color-bg-input);
+      --color-bg-tooltip: var(--color-bg-panel);
+      --color-bg-modal: var(--color-bg-panel);
+
+
+      --color-scrollbar-thumb: var(--color-primary-500);
+      --color-scrollbar-thumb-hover: var(--color-primary-600);
+      --color-scrollbar-track: #1a1a1a;
+
+      --color-matrix-text: '#0F0';
+
+      --color-system-message: #facc15; /* yellow-400 */
+      --color-user-intervention: #fb923c; /* orange-400 */
+      --color-facilitator: #c084fc; /* purple-400 */
+      --color-prompt-message: #fde047; /* yellow-300 */
+      --color-error: #ef4444; /* red-500 */
+      --color-info: #60a5fa; /* blue-400 */
+      
+      --color-ai1-text: #f87171; /* red-400 */
+      --color-ai2-text: #22d3ee; /* cyan-400 */
+      --color-story-weaver-text: var(--color-ai1-text); /* Story Weaver uses AI1 color by default */
+    }
+
+    /* Theme: Cyanotype */
+    html[data-theme="cyanotype"] {
+      --color-primary-500: #06b6d4; /* cyan-500 */
+      --color-primary-600: #0891b2; /* cyan-600 */
+      --color-primary-700: #0e7490; /* cyan-700 */
+      --color-accent-200: #a5f3fc; /* cyan-200 */
+      --color-accent-300: #67e8f9; /* cyan-300 */
+      --color-accent-400: #22d3ee; /* cyan-400 */
+      --color-text-base: #67e8f9; /* cyan-300 */
+      --color-text-heading: #a5f3fc; /* cyan-200 */
+      --color-text-muted: #22d3ee; /* cyan-400 */
+      --color-text-placeholder: #7dd3fc; /* lightBlue-300 */
+      --color-text-button-primary: #ffffff;
+      --color-text-button-secondary: var(--color-accent-300);
+      
+      --color-border-base: #06b6d4; /* cyan-500 */
+      --color-border-strong: #0891b2; /* cyan-600 */
+      --color-border-input: var(--color-primary-600);
+      --color-border-button-primary: var(--color-primary-600);
+      --color-border-button-secondary: #27576b; /* dark cyan-blue */
+
+      --color-bg-panel: rgba(5, 25, 35, 0.92);
+      --color-bg-input: #0f3040; /* Darker cyan-ish */
+      --color-bg-button-primary: var(--color-primary-500);
+      --color-bg-button-primary-hover: var(--color-primary-600);
+      --color-bg-button-secondary: #0f3040;
+      --color-bg-button-secondary-hover: #1e4a5f;
+      --color-bg-dropdown: var(--color-bg-input);
+      --color-bg-tooltip: var(--color-bg-panel);
+      --color-bg-page: #030f1a;
+      --color-bg-modal: var(--color-bg-panel);
+
+
+      --color-scrollbar-track: #02080f;
+      
+      --color-matrix-text: '#0CE';
+
+      --color-system-message: #fde047; /* yellow-300 */
+      --color-user-intervention: #f97316; /* orange-500 */
+      --color-facilitator: #d8b4fe; /* purple-300 */
+      --color-prompt-message: #fef08a; /* yellow-200 */
+      --color-error: #fb7185; /* rose-400 */
+      --color-info: #7dd3fc; /* lightBlue-300 */
+
+      --color-ai1-text: #fb7185; /* rose-400 */
+      --color-ai2-text: #5eead4; /* teal-300 */
+      --color-story-weaver-text: var(--color-ai1-text);
+    }
+
+    /* Theme: Redzone */
+    html[data-theme="redzone"] {
+      --color-primary-500: #ef4444; /* red-500 */
+      --color-primary-600: #dc2626; /* red-600 */
+      --color-primary-700: #b91c1c; /* red-700 */
+      --color-accent-200: #fecaca; /* red-200 */
+      --color-accent-300: #fca5a5; /* red-300 */
+      --color-accent-400: #f87171; /* red-400 */
+      --color-text-base: #fca5a5; /* red-300 */
+      --color-text-heading: #fecaca; /* red-200 */
+      --color-text-muted: #f87171; /* red-400 */
+      --color-text-placeholder: #b91c1c; /* red-700 */
+      --color-text-button-primary: #ffffff;
+      --color-text-button-secondary: var(--color-accent-300);
+
+      --color-border-base: #ef4444; /* red-500 */
+      --color-border-strong: #dc2626; /* red-600 */
+      --color-border-input: var(--color-primary-600);
+      --color-border-button-primary: var(--color-primary-600);
+      --color-border-button-secondary: #7f1d1d; /* dark red */
+      
+      --color-bg-panel: rgba(40, 0, 0, 0.92);
+      --color-bg-input: #400000; /* Darker red-ish */
+      --color-bg-button-primary: var(--color-primary-500);
+      --color-bg-button-primary-hover: var(--color-primary-600);
+      --color-bg-button-secondary: #400000;
+      --color-bg-button-secondary-hover: #5f0000;
+      --color-bg-dropdown: var(--color-bg-input);
+      --color-bg-tooltip: var(--color-bg-panel);
+      --color-bg-page: #1c0000;
+      --color-bg-modal: var(--color-bg-panel);
+
+      --color-scrollbar-track: #100000;
+
+      --color-matrix-text: '#F00';
+
+      --color-system-message: #fde047; /* yellow-300 */
+      --color-user-intervention: #fbbf24; /* amber-400 */
+      --color-facilitator: #e879f9; /* fuchsia-400 */
+      --color-prompt-message: #fef08a; /* yellow-200 */
+      --color-error: #fda4af; /* rose-300 */
+      --color-info: #fdba74; /* orange-300 */
+      
+      --color-ai1-text: #fde047; /* yellow-300 for contrast */
+      --color-ai2-text: #fdba74; /* orange-300 for contrast */
+      --color-story-weaver-text: var(--color-ai1-text);
+    }
+
+    /* Theme: Cyberpunk Yellow */
+    html[data-theme="cyberpunkYellow"] {
+      --color-primary-500: #FFD600;
+      --color-primary-600: #FBC02D;
+      --color-primary-700: #F9A825;
+      --color-accent-200: #84FFFF;
+      --color-accent-300: #18FFFF;
+      --color-accent-400: #00E5FF;
+      --color-text-base: #FFD600;
+      --color-text-heading: #FFFF8D;
+      --color-text-muted: #00E5FF;
+      --color-text-placeholder: #757575;
+      --color-text-button-primary: #000000;
+      --color-text-button-secondary: #FFD600;
+
+      --color-border-base: #FFD600;
+      --color-border-strong: #FBC02D;
+      --color-border-input: #FBC02D;
+      --color-border-button-primary: #FBC02D;
+      --color-border-button-secondary: #424242;
+      
+      --color-shadow-base: #FFD600;
+
+      --color-bg-page: #0A0A0A;
+      --color-bg-terminal: rgba(10,10,10,0.88);
+      --color-bg-panel: rgba(18,18,18,0.94);
+      --color-bg-input: #212121;
+      --color-bg-button-primary: #FFD600;
+      --color-bg-button-primary-hover: #FBC02D;
+      --color-bg-button-secondary: #333333;
+      --color-bg-button-secondary-hover: #424242;
+      --color-bg-dropdown: #212121;
+      --color-bg-tooltip: rgba(18,18,18,0.94);
+      --color-bg-modal: var(--color-bg-panel);
+
+
+      --color-scrollbar-thumb: #FFD600;
+      --color-scrollbar-thumb-hover: #FBC02D;
+      --color-scrollbar-track: #1f1f1f;
+
+      --color-matrix-text: '#FFD600';
+
+      --color-system-message: #00E5FF;
+      --color-user-intervention: #FFA000;
+      --color-facilitator: #F48FB1;
+      --color-prompt-message: #FFFF8D;
+      --color-error: #FF5252;
+      --color-info: #40C4FF;
+      
+      --color-ai1-text: #ec4899; 
+      --color-ai2-text: #00E5FF;
+      --color-story-weaver-text: var(--color-ai1-text);
+    }
+
+    /* Theme: Noospheric Dark */
+    html[data-theme="noosphericDark"] {
+      --color-primary-500: #4f46e5; /* indigo-600 */
+      --color-primary-600: #4338ca; /* indigo-700 */
+      --color-primary-700: #3730a3; /* indigo-800 */
+      --color-accent-200: #a5b4fc; /* indigo-300 */
+      --color-accent-300: #818cf8; /* indigo-400 */
+      --color-accent-400: #6366f1; /* indigo-500 */
+      --color-text-base: #a5b4fc; /* indigo-300 */
+      --color-text-heading: #e0e7ff; /* indigo-100 */
+      --color-text-muted: #818cf8; /* indigo-400 */
+      --color-text-placeholder: #4a5568; /* gray-600 */
+      --color-text-button-primary: #ffffff;
+      --color-text-button-secondary: var(--color-accent-200);
+
+      --color-border-base: var(--color-primary-500);
+      --color-border-strong: var(--color-primary-600);
+      --color-border-input: var(--color-primary-600);
+      --color-border-button-primary: var(--color-primary-600);
+      --color-border-button-secondary: #312e81; /* indigo-900 */
+      
+      --color-shadow-base: var(--color-primary-500);
+
+      --color-bg-page: #0b081a; /* Very dark deep blue/purple */
+      --color-bg-terminal: rgba(10, 8, 26, 0.88); /* Slightly lighter than page, transparent */
+      --color-bg-panel: rgba(18, 15, 38, 0.94); /* Panel bg */
+      --color-bg-input: #1e1b4b; /* indigo-950 */
+      --color-bg-button-primary: var(--color-primary-500);
+      --color-bg-button-primary-hover: var(--color-primary-600);
+      --color-bg-button-secondary: #312e81; /* indigo-900 */
+      --color-bg-button-secondary-hover: var(--color-primary-700);
+      --color-bg-dropdown: var(--color-bg-input);
+      --color-bg-tooltip: var(--color-bg-panel);
+      --color-bg-modal: rgba(25, 22, 50, 0.97);
+
+
+      --color-scrollbar-thumb: var(--color-primary-500);
+      --color-scrollbar-thumb-hover: var(--color-primary-600);
+      --color-scrollbar-track: #1a1731;
+
+      --color-matrix-text: '#818CF8'; /* indigo-400 for matrix */
+
+      --color-system-message: #facc15; /* yellow-400 */
+      --color-user-intervention: #fb923c; /* orange-400 */
+      --color-facilitator: #c084fc; /* purple-400 */
+      --color-prompt-message: #fde047; /* yellow-300 */
+      --color-error: #f87171; /* red-400 */
+      --color-info: #60a5fa; /* blue-400 */
+      
+      --color-ai1-text: #ef4444; /* red-500 (GEM-Q Red) */
+      --color-ai2-text: #22d3ee; /* cyan-400 (AXIOM Cyan) */
+      --color-story-weaver-text: var(--color-ai1-text);
+      --color-neutral-kj: #eab308; /* yellow-500 (KJs) */
+    }
+
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: var(--color-bg-page); 
+      color: var(--color-text-base);
+      height: 100vh; /* Ensure body takes full viewport height */
+      margin: 0; /* Remove default body margin */
+    }
+    #root {
+        height: 100%; /* Make root div take full height of body */
+    }
+    /* Custom scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-scrollbar-track);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-scrollbar-thumb);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-scrollbar-thumb-hover);
+    }
+    .log-display::-webkit-scrollbar-thumb {
+      background: var(--color-scrollbar-thumb);
+    }
+     .log-display::-webkit-scrollbar-thumb:hover {
+      background: var(--color-scrollbar-thumb-hover);
+    }
+    /* For Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+    }
+    .log-display {
+      scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+    }
+
+    /* Tailwind helper for focus rings with CSS variables */
+    .focus-ring-primary {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+    .focus-ring-primary:focus-visible {
+      box-shadow: 0 0 0 2px var(--color-bg-page), 0 0 0 4px var(--color-primary-500);
+    }
+     .focus-ring-accent {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+    .focus-ring-accent:focus-visible {
+      box-shadow: 0 0 0 2px var(--color-bg-page), 0 0 0 4px var(--color-accent-400);
+    }
+
+    /* Breathing Border Animation */
+    @keyframes breathing-border {
+      0%, 100% {
+        box-shadow: 0 0 3px 0px var(--color-primary-500), inset 0 0 2px 0px var(--color-primary-500);
+      }
+      50% {
+        box-shadow: 0 0 10px 2px var(--color-primary-500), inset 0 0 5px 1px var(--color-primary-500);
+      }
+    }
+    .animate-breathing-border {
+      animation: breathing-border 3s ease-in-out infinite;
+    }
+
+    /* Custom scrollbar for thumbnail history (can be same as log-display or different) */
+    .thumbnail-scrollbar::-webkit-scrollbar {
+      height: 6px; /* More slender for horizontal scroll */
+      width: 6px;
+    }
+    .thumbnail-scrollbar::-webkit-scrollbar-thumb {
+      background: var(--color-scrollbar-thumb-hover); /* Slightly more prominent for interaction cue */
+      border-radius: 3px;
+    }
+    .thumbnail-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.3); /* Darker track for thumbnails */
+    }
+    .thumbnail-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-scrollbar-thumb-hover) rgba(0,0,0,0.3);
+    }
+
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai?bundle",
+    "html2canvas": "https://esm.sh/html2canvas@1.4.1"
+  }
+}
+</script>
+</head>
+<body class="bg-[var(--color-bg-page)] overflow-hidden">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
