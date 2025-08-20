@@ -36,10 +36,14 @@ export const GEMINI_MULTIMODAL_MODEL_FOR_ODM = 'gemini-2.5-flash';
 
 export const AVAILABLE_MODELS: Array<{id: AIPersona['modelName'], name: string}> = [
   { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-  { id: 'gemini-2.5-flash-preview-05-02', name: 'Gemini 2.5 Flash (05-02 Preview)' },
   { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' },
   { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
   { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
+  { id: 'gemma-3n-e2b-it', name: 'Gemma 3N E2B (IT)' },
+  { id: 'gemma-3n-e4b-it', name: 'Gemma 3N E4B (IT)' },
+  { id: 'gemma-3-4b-it', name: 'Gemma 3 4B (IT)' },
+  { id: 'gemma-3-12b-it', name: 'Gemma 3 12B (IT)' },
+  { id: 'gemma-3-27b-it', name: 'Gemma 3 27B (IT)' },
 ];
 
 export const FAB_HUB_ACTIVATION_COST = 15;
