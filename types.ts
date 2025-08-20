@@ -1,4 +1,3 @@
-
 import { Content, Chat, GoogleGenAI, Scale } from "@google/genai";
 
 export enum AppMode {
@@ -692,6 +691,8 @@ export interface StoryWeaverModeContainerProps {
   onSaveStoryWeaver: () => void; // Added for save functionality
   onLoadStoryWeaver: (event: React.ChangeEvent<HTMLInputElement>) => void; // Added for load functionality
   onRequestNewStoryImage: () => void; // Added for requesting new image
+  onExportStoryBookMD: () => void; // For new storybook export
+  onExportStoryBookPDF: () => void; // For new storybook PDF export
 }
 
 export interface TerminalWindowProps {

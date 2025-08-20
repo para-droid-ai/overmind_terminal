@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GoogleGenAI, Chat, Content, Part, GenerateContentResponse, LiveMusicSession, LiveMusicServerMessage, Scale } from "@google/genai";
+import { jsPDF } from "jspdf";
 import MatrixBackground from './components/MatrixBackground';
 import TerminalWindow from './components/TerminalWindow';
 import ControlsPanel from './components/ControlsPanel';
@@ -1518,6 +1518,138 @@ const App: React.FC = () => {
   
   const handleBackupChat = () => { /* Generic Backup, needs refinement for Story Weaver */ };
 
+  const handleExportStoryBookMD = useCallback(() => {
+    if (currentMode !== AppMode.STORY_WEAVER_EXE || !selectedStorySeed) {
+        addMessageToHistory(SYSTEM_SENDER_NAME, "Story Book export is only available for completed stories in Story Weaver mode.", 'text-[var(--color-error)]', false, false);
+        return;
+    }
+
+    let markdownContent = `# ${selectedStorySeed.title}\n\n`;
+    let imageIndex = 0;
+
+    const relevantMessages = conversationHistory.filter(msg => 
+        msg.sender === STORY_WEAVER_SENDER_NAME || 
+        (msg.sender === SYSTEM_SENDER_NAME && msg.text.startsWith("Path chosen:"))
+    );
+
+    for (const msg of relevantMessages) {
+        if (msg.sender === STORY_WEAVER_SENDER_NAME) {
+            const cleanText = msg.text.replace(/\(Visualizing:.*?\)/g, '').trim();
+            markdownContent += `${cleanText}\n\n`;
+            if (imageIndex < imageSnapshots.length) {
+                const snapshot = imageSnapshots[imageIndex];
+                // The snapshot URL is already a base64 data URI
+                markdownContent += `![${snapshot.prompt.replace(/\]/g, '')}](${snapshot.url})\n\n`;
+                imageIndex++;
+            }
+        } else if (msg.sender === SYSTEM_SENDER_NAME) {
+            markdownContent += `> *${msg.text}*\n\n`;
+        }
+    }
+
+    const blob = new Blob([markdownContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\..+/, '');
+    const safeTitle = selectedStorySeed.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    a.download = `story-book_${safeTitle}_${timestamp}.md`;
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    addMessageToHistory(SYSTEM_SENDER_NAME, "Story Book exported as Markdown.", 'text-[var(--color-info)]', false, false);
+
+  }, [currentMode, selectedStorySeed, conversationHistory, imageSnapshots, addMessageToHistory]);
+  
+  const handleExportStoryBookPDF = useCallback(async () => {
+    if (currentMode !== AppMode.STORY_WEAVER_EXE || !selectedStorySeed) {
+      addMessageToHistory(SYSTEM_SENDER_NAME, "PDF export is only available for stories in Story Weaver mode.", 'text-[var(--color-error)]', false, false);
+      return;
+    }
+    
+    addMessageToHistory(SYSTEM_SENDER_NAME, "Generating PDF Story Book...", 'text-[var(--color-info)]', false, false);
+
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 15;
+    let y = margin;
+    let imageIndex = 0;
+
+    const checkPageBreak = (neededHeight: number) => {
+        if (y + neededHeight > pageHeight - margin) {
+            doc.addPage();
+            y = margin;
+        }
+    };
+    
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    const titleLines = doc.splitTextToSize(selectedStorySeed.title, pageWidth - margin * 2);
+    checkPageBreak(titleLines.length * 10);
+    doc.text(titleLines, pageWidth / 2, y, { align: 'center' });
+    y += titleLines.length * 10 + 10;
+    
+    const relevantMessages = conversationHistory.filter(msg => 
+        msg.sender === STORY_WEAVER_SENDER_NAME || 
+        (msg.sender === SYSTEM_SENDER_NAME && msg.text.startsWith("Path chosen:"))
+    );
+
+    for (const msg of relevantMessages) {
+        if (msg.sender === STORY_WEAVER_SENDER_NAME) {
+            // Add image first if it corresponds to this text block
+            if (imageIndex < imageSnapshots.length) {
+                const snapshot = imageSnapshots[imageIndex];
+                try {
+                    const img = new Image();
+                    img.src = snapshot.url;
+                    await new Promise(resolve => img.onload = resolve);
+                    
+                    const imgWidth = img.width;
+                    const imgHeight = img.height;
+                    const aspectRatio = imgWidth / imgHeight;
+                    const pdfImageWidth = pageWidth - margin * 2;
+                    const pdfImageHeight = pdfImageWidth / aspectRatio;
+
+                    checkPageBreak(pdfImageHeight + 5); 
+                    doc.addImage(snapshot.url, 'JPEG', margin, y, pdfImageWidth, pdfImageHeight);
+                    y += pdfImageHeight + 5;
+                    imageIndex++;
+                } catch(e) { console.error("Error loading image for PDF:", e); }
+            }
+            
+            // Add narrative text
+            const cleanText = msg.text.replace(/\(Visualizing:.*?\)/g, '').trim();
+            doc.setFont("times", "normal");
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            const textLines = doc.splitTextToSize(cleanText, pageWidth - margin * 2);
+            checkPageBreak(textLines.length * 5); // Approx height needed
+            doc.text(textLines, margin, y);
+            y += textLines.length * 5 + 8; // Line height approx 5
+
+        } else if (msg.sender === SYSTEM_SENDER_NAME) {
+            // Add choice text
+            doc.setFont("courier", "italic");
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            const choiceLines = doc.splitTextToSize(msg.text, pageWidth - margin * 2);
+            checkPageBreak(choiceLines.length * 4);
+            doc.text(choiceLines, margin, y);
+            y += choiceLines.length * 4 + 8;
+        }
+    }
+
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\..+/, '');
+    const safeTitle = selectedStorySeed.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    doc.save(`story-book_${safeTitle}_${timestamp}.pdf`);
+    addMessageToHistory(SYSTEM_SENDER_NAME, "Story Book exported as PDF.", 'text-[var(--color-info)]', false, false);
+
+  }, [currentMode, selectedStorySeed, conversationHistory, imageSnapshots, addMessageToHistory]);
+
+
   const handleSaveStoryWeaverSession = useCallback(() => {
     const backupData: ConversationBackup = {
       version: "1.1.0-sw",
@@ -1774,6 +1906,8 @@ const App: React.FC = () => {
             onSaveStoryWeaver={handleSaveStoryWeaverSession} 
             onLoadStoryWeaver={handleLoadChat}
             onRequestNewStoryImage={handleRequestStoryWeaverImage}
+            onExportStoryBookMD={handleExportStoryBookMD}
+            onExportStoryBookPDF={handleExportStoryBookPDF}
           />
         );
       case AppMode.CHIMERA_EXE:

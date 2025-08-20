@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 
 interface StoryWeaverSaveLoadModalProps {
@@ -6,9 +5,12 @@ interface StoryWeaverSaveLoadModalProps {
   onClose: () => void;
   onSave: () => void;
   onLoad: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onExportStoryBookMD: () => void;
+  onExportStoryBookPDF: () => void;
+  hasStoryContent: boolean;
 }
 
-const StoryWeaverSaveLoadModal: React.FC<StoryWeaverSaveLoadModalProps> = ({ isOpen, onClose, onSave, onLoad }) => {
+const StoryWeaverSaveLoadModal: React.FC<StoryWeaverSaveLoadModalProps> = ({ isOpen, onClose, onSave, onLoad, onExportStoryBookMD, onExportStoryBookPDF, hasStoryContent }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
@@ -50,15 +52,30 @@ const StoryWeaverSaveLoadModal: React.FC<StoryWeaverSaveLoadModalProps> = ({ isO
         <div className="space-y-4">
           <button
             onClick={() => { onSave(); onClose(); }}
-            className="w-full bg-[var(--color-bg-button-primary)] text-[var(--color-text-button-primary)] hover:bg-[var(--color-bg-button-primary-hover)] px-4 py-2.5 rounded-sm focus-ring-primary text-sm font-semibold uppercase tracking-wider"
+            disabled={!hasStoryContent}
+            className="w-full bg-[var(--color-bg-button-primary)] text-[var(--color-text-button-primary)] hover:bg-[var(--color-bg-button-primary-hover)] px-4 py-2.5 rounded-sm focus-ring-primary text-sm font-semibold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Current Story
+            Save Current Story Session (.json)
+          </button>
+          <button
+            onClick={() => { onExportStoryBookPDF(); onClose(); }}
+            disabled={!hasStoryContent}
+            className="w-full bg-indigo-600 text-white hover:bg-indigo-700 border-indigo-700 border-2 px-4 py-2.5 rounded-sm focus-ring-primary text-sm font-semibold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Export Story Book (.pdf)
+          </button>
+          <button
+            onClick={() => { onExportStoryBookMD(); onClose(); }}
+            disabled={!hasStoryContent}
+            className="w-full bg-cyan-600 text-white hover:bg-cyan-700 border-cyan-700 border-2 px-4 py-2.5 rounded-sm focus-ring-primary text-sm font-semibold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Export Story Book (.md)
           </button>
           <button
             onClick={handleLoadClick}
             className="w-full bg-[var(--color-bg-button-secondary)] text-[var(--color-text-button-secondary)] hover:bg-[var(--color-bg-button-secondary-hover)] px-4 py-2.5 rounded-sm focus-ring-accent text-sm font-semibold uppercase tracking-wider"
           >
-            Load Story from File
+            Load Story from File...
           </button>
           <input
             type="file"
@@ -70,7 +87,7 @@ const StoryWeaverSaveLoadModal: React.FC<StoryWeaverSaveLoadModalProps> = ({ isO
           />
         </div>
          <p className="text-xs text-[var(--color-text-muted)] mt-4 text-center">
-            Saving captures the current story, images, and choices. Loading will replace the current session.
+            Saving captures the interactive session. Exporting creates a shareable file with images. Loading replaces the current story.
         </p>
       </div>
     </div>

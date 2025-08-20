@@ -12,7 +12,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "@google/genai": "latest",
-    "html2canvas": "1.4.1"
+    "html2canvas": "1.4.1",
+    "jspdf": "2.5.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

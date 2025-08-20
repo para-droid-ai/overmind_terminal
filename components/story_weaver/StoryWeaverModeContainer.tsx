@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChatMessage, ImageSnapshot, SenderName, AppMode, StoryWeaverModeContainerProps, StorySeed, StoryOption } from '../../types'; 
 import { GoogleGenAI } from '@google/genai'; 
@@ -31,6 +30,8 @@ const StoryWeaverModeContainer: React.FC<StoryWeaverModeContainerProps> = (props
     onSaveStoryWeaver,
     onLoadStoryWeaver,
     onRequestNewStoryImage,
+    onExportStoryBookMD,
+    onExportStoryBookPDF,
   } = props;
 
   const [isSaveLoadModalOpen, setIsSaveLoadModalOpen] = useState(false);
@@ -79,6 +80,8 @@ const StoryWeaverModeContainer: React.FC<StoryWeaverModeContainerProps> = (props
   const terminalTitle = isAwaitingSeedChoice 
     ? `${terminalTitleBase} - CHOOSE YOUR SEED` 
     : `${terminalTitleBase}${dynamicTitlePart}`;
+
+  const hasStoryContent = messages.some(m => m.sender === STORY_WEAVER_SENDER_NAME) && snapshots.length > 0;
 
   const storyWeaverHeaderActions = (
     <button
@@ -131,6 +134,9 @@ const StoryWeaverModeContainer: React.FC<StoryWeaverModeContainerProps> = (props
             onClose={() => setIsSaveLoadModalOpen(false)}
             onSave={onSaveStoryWeaver}
             onLoad={onLoadStoryWeaver}
+            onExportStoryBookMD={onExportStoryBookMD}
+            onExportStoryBookPDF={onExportStoryBookPDF}
+            hasStoryContent={hasStoryContent}
           />
         )}
       </div>
@@ -199,6 +205,9 @@ const StoryWeaverModeContainer: React.FC<StoryWeaverModeContainerProps> = (props
           onClose={() => setIsSaveLoadModalOpen(false)}
           onSave={onSaveStoryWeaver}
           onLoad={onLoadStoryWeaver}
+          onExportStoryBookMD={onExportStoryBookMD}
+          onExportStoryBookPDF={onExportStoryBookPDF}
+          hasStoryContent={hasStoryContent}
         />
       )}
     </div>
