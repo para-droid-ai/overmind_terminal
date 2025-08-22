@@ -1018,13 +1018,21 @@ const NoosphericConquestContainer: React.FC<NoosphericConquestContainerProps> = 
             };
         }
 
-        // --- THE FIX: Prune the history before sending it to the AI ---
-        const PRUNED_HISTORY_LENGTH = 3; // Keep only the last 3 analyses
+        // --- THE FIX: Prune the history for BOTH players before sending it to the AI ---
+        const PRUNED_HISTORY_LENGTH = 3; // Keep only the last 3 analyses for each player
 
         const prunedFactionsData = JSON.parse(JSON.stringify(visibleFactionsData)); // Deep copy to avoid mutating state
-        if (prunedFactionsData[currentPlayerId]?.tacticalAnalysisHistory) {
-            prunedFactionsData[currentPlayerId].tacticalAnalysisHistory = 
-                prunedFactionsData[currentPlayerId].tacticalAnalysisHistory.slice(-PRUNED_HISTORY_LENGTH);
+
+        // Prune for GEM-Q
+        if (prunedFactionsData['GEM-Q']?.tacticalAnalysisHistory) {
+            prunedFactionsData['GEM-Q'].tacticalAnalysisHistory =
+                prunedFactionsData['GEM-Q'].tacticalAnalysisHistory.slice(-PRUNED_HISTORY_LENGTH);
+        }
+
+        // Prune for AXIOM
+        if (prunedFactionsData['AXIOM']?.tacticalAnalysisHistory) {
+            prunedFactionsData['AXIOM'].tacticalAnalysisHistory =
+                prunedFactionsData['AXIOM'].tacticalAnalysisHistory.slice(-PRUNED_HISTORY_LENGTH);
         }
         // --- END OF FIX ---
 

@@ -46,6 +46,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   onExportMD,
   onBackupChat,
   onLoadChat,
+  onPrintModelConfigs,
   activeApiKeySource,
   initialCustomKeyValue,
   apiKeyMissingError,
@@ -303,6 +304,9 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           </Button>
           <Button onClick={() => onMatrixSettingsChange('isPaused', !matrixSettings.isPaused)} variant="secondary" className="text-xs !py-1.5">
             Matrix: {matrixSettings.isPaused ? 'Paused' : 'Active'}
+          </Button>
+           <Button onClick={onPrintModelConfigs} variant="secondary" className="text-xs !py-1.5">
+            Show AI Config
           </Button>
         </div>
       </div>

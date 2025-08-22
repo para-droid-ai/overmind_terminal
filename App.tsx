@@ -711,11 +711,21 @@ const App: React.FC = () => {
     try {
       if (mode === AppMode.STORY_WEAVER_EXE) {
         const swPersona = getAIPersona('STORY_WEAVER_SINGLE', mode, globalSelectedModelId);
+        const modelInfo = AVAILABLE_MODELS.find(m => m.id === swPersona?.modelName);
         if (swPersona) {
+          const history = [...historyToRestore];
+          let config: any = {};
+
+          if (modelInfo && !modelInfo.supportsSystemInstruction) {
+            history.unshift({ role: 'user', parts: [{ text: swPersona.systemPrompt }] }, { role: 'model', parts: [{ text: "Understood. I am the STORY_WEAVER. I will now begin." }] });
+          } else {
+            config = { systemInstruction: swPersona.systemPrompt };
+          }
+
           storyWeaverChatRef.current = genAI.current.chats.create({
             model: swPersona.modelName,
-            config: { systemInstruction: swPersona.systemPrompt },
-            history: historyToRestore, 
+            config: config,
+            history: history,
           });
           storyOptionGeneratorChatRef.current = genAI.current.chats.create({
             model: GEMINI_MODEL_NAME_FLASH_DEFAULT, 
@@ -728,18 +738,37 @@ const App: React.FC = () => {
       } else if (mode === AppMode.CHIMERA_EXE) {
         const dmPersona = getAIPersona('CHIMERA_DM', mode, globalSelectedModelId, 'gemini-2.0-flash'); 
         const playerPersona = getAIPersona('CHIMERA_PLAYER_AI', mode, globalSelectedModelId);
+        const dmModelInfo = AVAILABLE_MODELS.find(m => m.id === dmPersona?.modelName);
+        const playerModelInfo = AVAILABLE_MODELS.find(m => m.id === playerPersona?.modelName);
+
         if (dmPersona && playerPersona) {
-          chimeraDmAiChatRef.current = genAI.current.chats.create({
-            model: dmPersona.modelName,
-            config: { systemInstruction: dmPersona.systemPrompt },
-            history: ai1HistoryToRestore || [],
-          });
-          chimeraPlayerAiChatRef.current = genAI.current.chats.create({
-            model: playerPersona.modelName,
-            config: { systemInstruction: playerPersona.systemPrompt },
-            history: ai2HistoryToRestore || [],
-          });
-          setIsAiReadyForChimera(true);
+            const dmHistory = [...(ai1HistoryToRestore || [])];
+            let dmConfig: any = {};
+            if (dmModelInfo && !dmModelInfo.supportsSystemInstruction) {
+                dmHistory.unshift({ role: 'user', parts: [{ text: dmPersona.systemPrompt }] }, { role: 'model', parts: [{ text: "Understood." }] });
+            } else {
+                dmConfig.systemInstruction = dmPersona.systemPrompt;
+            }
+            chimeraDmAiChatRef.current = genAI.current.chats.create({
+                model: dmPersona.modelName,
+                config: dmConfig,
+                history: dmHistory,
+            });
+
+            const playerHistory = [...(ai2HistoryToRestore || [])];
+            let playerConfig: any = {};
+            if (playerModelInfo && !playerModelInfo.supportsSystemInstruction) {
+                playerHistory.unshift({ role: 'user', parts: [{ text: playerPersona.systemPrompt }] }, { role: 'model', parts: [{ text: "Understood." }] });
+            } else {
+                playerConfig.systemInstruction = playerPersona.systemPrompt;
+            }
+            chimeraPlayerAiChatRef.current = genAI.current.chats.create({
+                model: playerPersona.modelName,
+                config: playerConfig,
+                history: playerHistory,
+            });
+
+            setIsAiReadyForChimera(true);
         } else {
           throw new Error("Chimera DM or Player persona not found.");
         }
@@ -747,19 +776,39 @@ const App: React.FC = () => {
         ai1Persona = getAIPersona(1, mode, globalSelectedModelId);
         ai2Persona = getAIPersona(2, mode, globalSelectedModelId);
 
+        const modelInfo1 = AVAILABLE_MODELS.find(m => m.id === ai1Persona?.modelName);
+        const modelInfo2 = AVAILABLE_MODELS.find(m => m.id === ai2Persona?.modelName);
+
         if (ai1Persona) {
-          ai1ChatRef.current = genAI.current.chats.create({
-            model: ai1Persona.modelName,
-            config: { systemInstruction: ai1Persona.systemPrompt },
-            history: ai1HistoryToRestore || historyToRestore,
-          });
+            const history1 = [...(ai1HistoryToRestore || historyToRestore)];
+            let config1: any = {};
+
+            if (modelInfo1 && !modelInfo1.supportsSystemInstruction) {
+                history1.unshift({ role: 'user', parts: [{ text: ai1Persona.systemPrompt }] }, { role: 'model', parts: [{ text: "Understood." }] });
+            } else {
+                config1 = { systemInstruction: ai1Persona.systemPrompt };
+            }
+
+            ai1ChatRef.current = genAI.current.chats.create({
+                model: ai1Persona.modelName,
+                config: config1,
+                history: history1,
+            });
         }
         if (ai2Persona) {
-          ai2ChatRef.current = genAI.current.chats.create({
-            model: ai2Persona.modelName,
-            config: { systemInstruction: ai2Persona.systemPrompt },
-            history: ai2HistoryToRestore || historyToRestore,
-          });
+            const history2 = [...(ai2HistoryToRestore || historyToRestore)];
+            let config2: any = {};
+
+            if (modelInfo2 && !modelInfo2.supportsSystemInstruction) {
+                history2.unshift({ role: 'user', parts: [{ text: ai2Persona.systemPrompt }] }, { role: 'model', parts: [{ text: "Understood." }] });
+            } else {
+                config2 = { systemInstruction: ai2Persona.systemPrompt };
+            }
+            ai2ChatRef.current = genAI.current.chats.create({
+                model: ai2Persona.modelName,
+                config: config2,
+                history: history2,
+            });
         }
 
         if (mode === AppMode.CHESS_SIM_EXE && ai1ChatRef.current && ai2ChatRef.current) {
@@ -1384,6 +1433,39 @@ const App: React.FC = () => {
     resetAndInitializeForNewMode(currentMode, false);
   }, [currentMode, addMessageToHistory, resetAndInitializeForNewMode]);
 
+  const handlePrintModelConfigs = useCallback(() => {
+    const ai1Persona = getAIPersona(1, currentMode, globalSelectedModelId);
+    const ai2Persona = getAIPersona(2, currentMode, globalSelectedModelId);
+    const storyWeaverPersona = getAIPersona('STORY_WEAVER_SINGLE', AppMode.STORY_WEAVER_EXE, globalSelectedModelId);
+    const chimeraDmPersona = getAIPersona('CHIMERA_DM', AppMode.CHIMERA_EXE, globalSelectedModelId, 'gemini-2.0-flash');
+    const chimeraPlayerPersona = getAIPersona('CHIMERA_PLAYER_AI', AppMode.CHIMERA_EXE, globalSelectedModelId);
+
+    let configText = "--- CURRENT AI CONFIGURATION ---\n\n";
+
+    if (currentMode === AppMode.STORY_WEAVER_EXE) {
+      if (storyWeaverPersona) {
+        configText += `[${storyWeaverPersona.name}]\n- Model: ${storyWeaverPersona.modelName}\n- System Prompt: "${storyWeaverPersona.systemPrompt.substring(0, 150)}..."\n\n`;
+      }
+    } else if (currentMode === AppMode.CHIMERA_EXE) {
+      if (chimeraDmPersona) {
+        configText += `[${chimeraDmPersona.name}]\n- Model: ${chimeraDmPersona.modelName}\n- System Prompt: "${chimeraDmPersona.systemPrompt.substring(0, 150)}..."\n\n`;
+      }
+      if (chimeraPlayerPersona) {
+        configText += `[${chimeraPlayerPersona.name}]\n- Model: ${chimeraPlayerPersona.modelName}\n- System Prompt: "${chimeraPlayerPersona.systemPrompt.substring(0, 150)}..."\n\n`;
+      }
+    } else {
+      if (ai1Persona) {
+        configText += `[${ai1Persona.name}]\n- Model: ${ai1Persona.modelName}\n- System Prompt: "${ai1Persona.systemPrompt.substring(0, 150)}..."\n\n`;
+      }
+      if (ai2Persona) {
+        configText += `[${ai2Persona.name}]\n- Model: ${ai2Persona.modelName}\n- System Prompt: "${ai2Persona.systemPrompt.substring(0, 150)}..."\n\n`;
+      }
+    }
+
+    configText += "---------------------------------";
+    addMessageToHistory(SYSTEM_SENDER_NAME, configText, 'text-[var(--color-prompt-message)]', false, false);
+  }, [currentMode, globalSelectedModelId, addMessageToHistory]);
+
 
   const handleEmergencyStopToggle = useCallback(() => {
     setIsEmergencyStopActive(prev => {
@@ -1966,6 +2048,7 @@ const App: React.FC = () => {
                     onExportMD={handleExportMD}
                     onBackupChat={handleBackupChat}
                     onLoadChat={handleLoadChat}
+                    onPrintModelConfigs={handlePrintModelConfigs}
                     isAIsTyping={isLoading}
                     activeAIName={activeAINameForLoading}
                     currentMode={currentMode}

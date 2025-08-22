@@ -65,6 +65,7 @@ export interface ControlsPanelProps {
   onExportMD: () => void;
   onBackupChat: () => void;
   onLoadChat: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onPrintModelConfigs: () => void;
   isAIsTyping: boolean;
   activeAIName: string | null;
   currentMode: AppMode;
