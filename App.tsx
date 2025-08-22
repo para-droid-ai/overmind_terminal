@@ -1424,6 +1424,46 @@ const App: React.FC = () => {
     }
   }, [currentMode, isAwaitingInitialStart, addMessageToHistory, resetAndInitializeForNewMode]);
 
+  const handlePrintModelConfigs = useCallback(() => {
+    let configText = `--- CURRENT AI CONFIGURATION ---\nMode: ${currentMode}\nGlobal Model: ${AVAILABLE_MODELS.find(m => m.id === globalSelectedModelId)?.name || globalSelectedModelId}\n`;
+
+    const addPersonaInfo = (persona: AIPersona | null) => {
+      if (!persona) return 'Persona not configured for this mode.\n';
+      return `\n== ${persona.name} ==\nModel: ${AVAILABLE_MODELS.find(m => m.id === persona.modelName)?.name || persona.modelName}\nSystem Prompt:\n---\n${persona.systemPrompt}\n---\n`;
+    };
+
+    switch (currentMode) {
+      case AppMode.STORY_WEAVER_EXE: {
+        const swPersona = getAIPersona('STORY_WEAVER_SINGLE', currentMode, globalSelectedModelId);
+        configText += addPersonaInfo(swPersona);
+        configText += `\n== Story Option Generator ==\nModel: ${GEMINI_MODEL_NAME_FLASH_DEFAULT}\nSystem Prompt:\n---\n${STORY_OPTION_GENERATOR_SYSTEM_PROMPT}\n---\n`;
+        break;
+      }
+      case AppMode.CHIMERA_EXE: {
+        const dmPersona = getAIPersona('CHIMERA_DM', currentMode, globalSelectedModelId, 'gemini-2.0-flash');
+        const playerPersona = getAIPersona('CHIMERA_PLAYER_AI', currentMode, globalSelectedModelId);
+        configText += addPersonaInfo(dmPersona);
+        configText += addPersonaInfo(playerPersona);
+        break;
+      }
+      case AppMode.UNIVERSE_SIM_EXE: {
+        const ai1Persona = getAIPersona(1, currentMode, globalSelectedModelId);
+        configText += addPersonaInfo(ai1Persona);
+        break;
+      }
+      default: { // SEMANTIC_ESCAPE, CHESS, NOOSPHERIC, etc.
+        const ai1Persona = getAIPersona(1, currentMode, globalSelectedModelId);
+        const ai2Persona = getAIPersona(2, currentMode, globalSelectedModelId);
+        configText += addPersonaInfo(ai1Persona);
+        configText += addPersonaInfo(ai2Persona);
+        break;
+      }
+    }
+    
+    addMessageToHistory(SYSTEM_SENDER_NAME, configText.trim(), 'text-[var(--color-info)]', false, false);
+
+  }, [currentMode, globalSelectedModelId, addMessageToHistory]);
+
 
   const handleMatrixSettingsChange = useCallback(<K extends keyof MatrixSettings>(key: K, value: MatrixSettings[K]) => {
     setMatrixSettings((prev) => ({ ...prev, [key]: value }));
@@ -1977,6 +2017,7 @@ const App: React.FC = () => {
                     activeTheme={activeTheme}
                     onThemeChange={handleThemeChange}
                     onOpenInfoModal={() => setIsInfoModalOpen(true)}
+                    onPrintModelConfigs={handlePrintModelConfigs}
                     globalSelectedModelId={globalSelectedModelId}
                     onGlobalModelChange={handleGlobalModelChange}
                     isEmergencyStopActive={isEmergencyStopActive}
@@ -2057,6 +2098,7 @@ const App: React.FC = () => {
             activeTheme={activeTheme}
             onThemeChange={handleThemeChange}
             onOpenInfoModal={() => setIsInfoModalOpen(true)}
+            onPrintModelConfigs={handlePrintModelConfigs}
             globalSelectedModelId={globalSelectedModelId}
             onGlobalModelChange={handleGlobalModelChange}
             isEmergencyStopActive={isEmergencyStopActive}
@@ -2125,6 +2167,7 @@ const App: React.FC = () => {
               activeTheme={activeTheme}
               onThemeChange={handleThemeChange}
               onOpenInfoModal={() => setIsInfoModalOpen(true)}
+              onPrintModelConfigs={handlePrintModelConfigs}
               globalSelectedModelId={globalSelectedModelId}
               onGlobalModelChange={handleGlobalModelChange}
               isEmergencyStopActive={isEmergencyStopActive}

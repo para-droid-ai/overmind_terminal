@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Chat, GenerateContentResponse } from '@google/genai';
 import {
@@ -1018,26 +1017,37 @@ const NoosphericConquestContainer: React.FC<NoosphericConquestContainerProps> = 
             };
         }
 
-        // --- THE FIX: Prune the history before sending it to the AI ---
-        const PRUNED_HISTORY_LENGTH = 3; // Keep only the last 3 analyses
+        const PRUNED_HISTORY_LENGTH = 3;
 
-        const prunedFactionsData = JSON.parse(JSON.stringify(visibleFactionsData)); // Deep copy to avoid mutating state
-        if (prunedFactionsData[currentPlayerId]?.tacticalAnalysisHistory) {
-            prunedFactionsData[currentPlayerId].tacticalAnalysisHistory = 
-                prunedFactionsData[currentPlayerId].tacticalAnalysisHistory.slice(-PRUNED_HISTORY_LENGTH);
+        const prunedFactionsData = JSON.parse(JSON.stringify(visibleFactionsData));
+        if (prunedFactionsData['GEM-Q']?.tacticalAnalysisHistory) {
+            prunedFactionsData['GEM-Q'].tacticalAnalysisHistory =
+                prunedFactionsData['GEM-Q'].tacticalAnalysisHistory.slice(-PRUNED_HISTORY_LENGTH);
         }
-        // --- END OF FIX ---
+        if (prunedFactionsData['AXIOM']?.tacticalAnalysisHistory) {
+            prunedFactionsData['AXIOM'].tacticalAnalysisHistory =
+                prunedFactionsData['AXIOM'].tacticalAnalysisHistory.slice(-PRUNED_HISTORY_LENGTH);
+        }
+        
+        // Prune map data for the prompt to reduce size
+        const promptMapNodes: Record<string, any> = {};
+        for (const nodeId in visibleMapNodes) {
+            // Destructure to remove properties not needed by the AI for decision making
+            const { x, y, label, ...essentialNodeData } = visibleMapNodes[nodeId];
+            promptMapNodes[nodeId] = essentialNodeData;
+        }
 
         const basePromptGameState = {
             currentTurn: gameStateRef.current.turn,
             currentPhase: currentPhaseSnapshot,
             yourFactionId: currentPlayerId,
-            mapNodes: visibleMapNodes,
+            mapNodes: promptMapNodes, // Use the pruned map data
             mapType: gameStateRef.current.mapType,
             isFogOfWarActive: isFogOfWarCurrentlyActive,
             isGreatWarMode: isGreatWarActive,
-            factions: prunedFactionsData, // Use the pruned data
+            factions: prunedFactionsData,
         };
+
         let basePromptString = `Current Game State:\n${JSON.stringify(basePromptGameState, null, 2)}\n\nYour turn (${currentPlayerId}) for phase ${currentPhaseSnapshot}. Provide JSON response.`;
         if (isGreatWarActive) basePromptString += GREAT_WAR_AI_SYSTEM_PROMPT_ADDENDUM;
 

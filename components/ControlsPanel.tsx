@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   MatrixSettings, AppMode, InterventionTarget, ThemeName, ControlsPanelProps
@@ -60,6 +59,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   activeTheme,
   onThemeChange,
   onOpenInfoModal,
+  onPrintModelConfigs,
   onSendUserIntervention,
   currentTypingSpeed,
   onTypingSpeedChange,
@@ -303,6 +303,9 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
           </Button>
           <Button onClick={() => onMatrixSettingsChange('isPaused', !matrixSettings.isPaused)} variant="secondary" className="text-xs !py-1.5">
             Matrix: {matrixSettings.isPaused ? 'Paused' : 'Active'}
+          </Button>
+          <Button onClick={onPrintModelConfigs} variant="secondary" className="text-xs !py-1.5 col-span-2">
+            Show AI Config
           </Button>
         </div>
       </div>
