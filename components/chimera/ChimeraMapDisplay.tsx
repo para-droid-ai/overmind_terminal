@@ -29,7 +29,8 @@ const ChimeraMapDisplay: React.FC<ChimeraMapDisplayProps> = ({ mapData, currentN
 
   useEffect(() => {
     if (mapData && mapData.nodes && Object.keys(mapData.nodes).length > 0) {
-      const nodes = Object.values(mapData.nodes);
+      // FIX: Add explicit type annotation for nodes to resolve 'unknown' type errors.
+      const nodes: ChimeraMapNode[] = Object.values(mapData.nodes);
       const dataPointsX = nodes.map(n => n.x);
       const dataPointsY = nodes.map(n => n.y);
       const minDataX = Math.min(...dataPointsX, 0);

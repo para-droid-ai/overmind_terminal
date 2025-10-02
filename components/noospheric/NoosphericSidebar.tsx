@@ -101,7 +101,8 @@ const NoosphericSidebar: React.FC<NoosphericSidebarProps> = ({
   const PADDING_MINIMAP = NODE_MINIMAP_RADIUS * 2.5;
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
-  const nodeValues = Object.values(mapNodes);
+  // FIX: Add explicit type annotation for nodeValues to resolve 'unknown' type errors.
+  const nodeValues: NoosphericNodeData[] = Object.values(mapNodes);
   if (nodeValues.length > 0) {
     nodeValues.forEach(n => {
         minX = Math.min(minX, n.x);
@@ -145,7 +146,8 @@ const NoosphericSidebar: React.FC<NoosphericSidebarProps> = ({
     
     let totalQROutputThisTurn = 0;
     if (isGameStarted) {
-        Object.values(mapNodes).forEach(node => {
+        // FIX: Add explicit type annotation for node to resolve 'unknown' type errors.
+        Object.values(mapNodes).forEach((node: NoosphericNodeData) => {
             if (node.owner === factionId && isNodeConnectedToFactionCN(node.id, factionId, mapNodes)) {
                 totalQROutputThisTurn += node.qrOutput;
             }
@@ -394,11 +396,38 @@ const NoosphericSidebar: React.FC<NoosphericSidebarProps> = ({
         </>
       )}
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: var(--color-scrollbar-track); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--color-scrollbar-thumb); border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--color-scrollbar-thumb-hover); }
-        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track); }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: var(--color-scrollbar-track);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: var(--color-scrollbar-thumb);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: var(--color-scrollbar-thumb-hover);
+        }
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+        }
+        .thumbnail-scrollbar::-webkit-scrollbar {
+          height: 4px; 
+        }
+        .thumbnail-scrollbar::-webkit-scrollbar-thumb {
+          background: var(--color-scrollbar-thumb); 
+          border-radius: 2px;
+        }
+        .thumbnail-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0,0,0,0.1); 
+        }
+        .thumbnail-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: var(--color-scrollbar-thumb) rgba(0,0,0,0.1);
+        }
       `}</style>
     </aside>
   );

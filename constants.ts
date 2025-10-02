@@ -35,14 +35,12 @@ export const IMAGEN_MODEL_NAME = 'imagen-3.0-generate-002';
 export const GEMINI_MULTIMODAL_MODEL_FOR_ODM = 'gemini-2.5-flash'; 
 
 export const AVAILABLE_MODELS: Array<{id: AIPersona['modelName'], name: string}> = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' },
   { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
-  { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-  { id: 'gemma-3n-e2b-it', name: 'Gemma 3 2B IT (Efficient)' },
-  { id: 'gemma-3n-e4b-it', name: 'Gemma 3 4B IT (Efficient)' },
-  { id: 'gemma-3-4b-it', name: 'Gemma 3 4B IT' },
-  { id: 'gemma-3-12b-it', name: 'Gemma 3 12B IT' },
+  { id: 'gemini-flash-latest', name: 'Gemini Flash Latest' },
+  { id: 'gemini-flash-lite-latest', name: 'Gemini Flash-Lite Latest' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+  { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash-Lite' },
+  { id: 'gemma-3n-e4b-it', name: 'Gemma 3N 4B IT' },
   { id: 'gemma-3-27b-it', name: 'Gemma 3 27B IT' },
 ];
 
@@ -405,7 +403,7 @@ export const getAIPersona = (
       if (personaType === 2) return { name: AI2_NAME, systemPrompt: NOOSPHERIC_CONQUEST_AI2_SYSTEM_PROMPT, modelName: selectedModel, color: 'text-[var(--color-ai2-text)]' };
       break;
     case AppMode.CHIMERA_EXE:
-      if (personaType === 'CHIMERA_DM') return { name: CHIMERA_DM_SENDER_NAME, systemPrompt: CHIMERA_DM_SYSTEM_PROMPT, modelName: overrideModel || 'gemini-2.0-flash', color: CHIMERA_DM_COLOR };
+      if (personaType === 'CHIMERA_DM') return { name: CHIMERA_DM_SENDER_NAME, systemPrompt: CHIMERA_DM_SYSTEM_PROMPT, modelName: overrideModel || 'gemini-2.5-flash', color: CHIMERA_DM_COLOR };
       if (personaType === 'CHIMERA_PLAYER_AI') return { name: CHIMERA_PLAYER_SENDER_NAME, systemPrompt: CHIMERA_PLAYER_AI_SYSTEM_PROMPT, modelName: selectedModel, color: CHIMERA_PLAYER_COLOR };
       break;
     // Add other modes here

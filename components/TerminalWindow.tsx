@@ -83,7 +83,8 @@ const TerminalWindow: React.FC<TerminalWindowProps> = ({
   useEffect(() => {
     setDisplayedMessages(prevDisplayed => {
       const existingMap = new Map(prevDisplayed.map(m => [m.id, m]));
-      const newDisplayed = messages.map(appMsg => {
+      // FIX: Add explicit type for appMsg to resolve type inference issues.
+      const newDisplayed = messages.map((appMsg: ChatMessage) => {
         const existing = existingMap.get(appMsg.id);
         if (existing) {
           if (fullyTypedMessages.has(appMsg.id) && existing.text !== appMsg.text) {
@@ -95,7 +96,8 @@ const TerminalWindow: React.FC<TerminalWindowProps> = ({
         return { ...appMsg, text: (isTypingActive && appMsg.id === activeTypingMessageId) ? "" : appMsg.text };
       });
       // Ensure only messages present in the source `messages` prop are kept
-      return newDisplayed.filter(ndm => messages.some(am => am.id === ndm.id));
+      // FIX: Add explicit type for ndm to resolve type inference issues.
+      return newDisplayed.filter((ndm: ChatMessage) => messages.some(am => am.id === ndm.id));
     });
   }, [messages]); // Re-sync displayedMessages when source `messages` prop changes
 

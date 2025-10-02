@@ -1,4 +1,6 @@
 import { Content, Chat, GoogleGenAI, Scale } from "@google/genai";
+// FIX: Import React to provide types for React.ChangeEvent and React.ReactNode
+import React from 'react';
 
 export enum AppMode {
   // SPIRAL_EXE = "spiral.exe", 
@@ -20,14 +22,12 @@ export interface MatrixSettings {
 }
 
 export type TextModelId =
+  | 'gemini-2.5-pro'
+  | 'gemini-flash-latest'
+  | 'gemini-flash-lite-latest'
   | 'gemini-2.5-flash'
   | 'gemini-2.5-flash-lite'
-  | 'gemini-2.5-pro'
-  | 'gemini-2.0-flash'
-  | 'gemma-3n-e2b-it'
   | 'gemma-3n-e4b-it'
-  | 'gemma-3-4b-it'
-  | 'gemma-3-12b-it'
   | 'gemma-3-27b-it';
 
 export type ImageModelId = 'imagen-3.0-generate-002';

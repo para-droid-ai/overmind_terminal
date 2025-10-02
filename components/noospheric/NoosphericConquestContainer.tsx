@@ -913,20 +913,14 @@ const NoosphericConquestContainer: React.FC<NoosphericConquestContainerProps> = 
                     }
                 }
 
-                if (nextPhase !== 'GAME_OVER' && prev.turn >= DEFAULT_MAX_TURNS && updatedState.winner === undefined) {
-                    if (!updatedState.isGreatWarMode) {
-                        const gemQScore = updatedState.factions['GEM-Q'].qr + updatedState.factions['GEM-Q'].nodesControlled * 2 + updatedState.factions['GEM-Q'].kjsHeld * 5 + updatedState.factions['GEM-Q'].totalUnits;
-                        const axiomScore = updatedState.factions['AXIOM'].qr + updatedState.factions['AXIOM'].nodesControlled * 2 + updatedState.factions['AXIOM'].kjsHeld * 5 + updatedState.factions['AXIOM'].totalUnits;
-                        if (gemQScore > axiomScore) updatedState.winner = 'GEM-Q';
-                        else if (axiomScore > gemQScore) updatedState.winner = 'AXIOM';
-                        else updatedState.winner = 'DRAW';
-                        nextPhase = 'GAME_OVER';
-                        addSystemLog(`Max turns (${DEFAULT_MAX_TURNS}) reached. Winner by score: ${updatedState.winner}. GEM-Q: ${gemQScore}, AXIOM: ${axiomScore}`, "EVENT", undefined, prev.turn, 'GAME_OVER');
-                    } else {
-                         updatedState.winner = 'DRAW';
-                         nextPhase = 'GAME_OVER';
-                         addSystemLog(`Max turns (${DEFAULT_MAX_TURNS}) reached in Great War. Game ends in a Stalemate.`, "EVENT", undefined, prev.turn, 'GAME_OVER');
-                    }
+                if (nextPhase !== 'GAME_OVER' && !updatedState.isGreatWarMode && prev.turn >= DEFAULT_MAX_TURNS && updatedState.winner === undefined) {
+                    const gemQScore = updatedState.factions['GEM-Q'].qr + updatedState.factions['GEM-Q'].nodesControlled * 2 + updatedState.factions['GEM-Q'].kjsHeld * 5 + updatedState.factions['GEM-Q'].totalUnits;
+                    const axiomScore = updatedState.factions['AXIOM'].qr + updatedState.factions['AXIOM'].nodesControlled * 2 + updatedState.factions['AXIOM'].kjsHeld * 5 + updatedState.factions['AXIOM'].totalUnits;
+                    if (gemQScore > axiomScore) updatedState.winner = 'GEM-Q';
+                    else if (axiomScore > gemQScore) updatedState.winner = 'AXIOM';
+                    else updatedState.winner = 'DRAW';
+                    nextPhase = 'GAME_OVER';
+                    addSystemLog(`Max turns (${DEFAULT_MAX_TURNS}) reached. Winner by score: ${updatedState.winner}. GEM-Q: ${gemQScore}, AXIOM: ${axiomScore}`, "EVENT", undefined, prev.turn, 'GAME_OVER');
                 }
 
                 if (nextPhase !== 'GAME_OVER') {

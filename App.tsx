@@ -117,7 +117,7 @@ function throttle<T extends (...args: any[]) => any>(func: T, delay: number): T 
 
 const App: React.FC = () => {
   const [activeTheme, setActiveTheme] = useState<ThemeName>('terminal');
-  const [globalSelectedModelId, setGlobalSelectedModelId] = useState<string>(AVAILABLE_MODELS[0].id);
+  const [globalSelectedModelId, setGlobalSelectedModelId] = useState<string>(GEMINI_MODEL_NAME_FLASH_DEFAULT);
 
   const [matrixSettings, setMatrixSettings] = useState<MatrixSettings>({
     speed: DEFAULT_MATRIX_SPEED,
@@ -256,7 +256,7 @@ const App: React.FC = () => {
         const ai1PersonaFromConstants = getAIPersona(1, currentMode, globalSelectedModelId);
         const ai2PersonaFromConstants = getAIPersona(2, currentMode, globalSelectedModelId);
         const storyWeaverPersonaConst = getAIPersona('STORY_WEAVER_SINGLE', AppMode.STORY_WEAVER_EXE, globalSelectedModelId);
-        const chimeraDmPersonaConst = getAIPersona('CHIMERA_DM', AppMode.CHIMERA_EXE, globalSelectedModelId, 'gemini-2.0-flash');
+        const chimeraDmPersonaConst = getAIPersona('CHIMERA_DM', AppMode.CHIMERA_EXE, globalSelectedModelId, 'gemini-2.5-flash');
         const chimeraPlayerPersonaConst = getAIPersona('CHIMERA_PLAYER_AI', AppMode.CHIMERA_EXE, globalSelectedModelId);
 
 
@@ -726,7 +726,7 @@ const App: React.FC = () => {
           throw new Error("Story Weaver persona not found.");
         }
       } else if (mode === AppMode.CHIMERA_EXE) {
-        const dmPersona = getAIPersona('CHIMERA_DM', mode, globalSelectedModelId, 'gemini-2.0-flash'); 
+        const dmPersona = getAIPersona('CHIMERA_DM', mode, globalSelectedModelId, 'gemini-2.5-flash'); 
         const playerPersona = getAIPersona('CHIMERA_PLAYER_AI', mode, globalSelectedModelId);
         if (dmPersona && playerPersona) {
           chimeraDmAiChatRef.current = genAI.current.chats.create({
@@ -1440,7 +1440,7 @@ const App: React.FC = () => {
         break;
       }
       case AppMode.CHIMERA_EXE: {
-        const dmPersona = getAIPersona('CHIMERA_DM', currentMode, globalSelectedModelId, 'gemini-2.0-flash');
+        const dmPersona = getAIPersona('CHIMERA_DM', currentMode, globalSelectedModelId, 'gemini-2.5-flash');
         const playerPersona = getAIPersona('CHIMERA_PLAYER_AI', currentMode, globalSelectedModelId);
         configText += addPersonaInfo(dmPersona);
         configText += addPersonaInfo(playerPersona);

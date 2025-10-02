@@ -274,7 +274,8 @@ const ChimeraModeContainer: React.FC<ChimeraModeContainerProps> = ({
     if (actionVerb === "MOVE" && actionParams.length > 0 && activeMapData && gameState) {
         const targetNodeId = actionParams[0].toLowerCase(); 
         const currentNode: ChimeraMapNode | undefined = activeMapData.nodes[gameState.currentNodeId];
-        const targetNodeData: ChimeraMapNode | undefined = Object.values(activeMapData.nodes).find(n => n.id.toLowerCase() === targetNodeId);
+        // FIX: Add explicit type annotation for 'n' to resolve 'unknown' type error.
+        const targetNodeData: ChimeraMapNode | undefined = Object.values(activeMapData.nodes).find((n: ChimeraMapNode) => n.id.toLowerCase() === targetNodeId);
 
         if (currentNode && targetNodeData && currentNode.connections.includes(targetNodeData.id)) {
             newPlayerNodeId = targetNodeData.id;
